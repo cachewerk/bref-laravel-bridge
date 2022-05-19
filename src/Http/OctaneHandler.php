@@ -2,6 +2,7 @@
 
 namespace CacheWerk\BrefLaravelBridge\Http;
 
+use CacheWerk\BrefLaravelBridge\MaintenanceMode;
 use CacheWerk\BrefLaravelBridge\Octane\OctaneClient;
 
 use Illuminate\Http\Request;
@@ -22,7 +23,9 @@ class OctaneHandler extends HttpHandler
             SymfonyRequestBridge::convertRequest($event, $context)
         );
 
-        $response = OctaneClient::handle($request);
+        $response = MaintenanceMode::active()
+            ? MaintenanceMode::response($request)
+            : OctaneClient::handle($request);
 
         return new HttpResponse(
             $response->getContent(),

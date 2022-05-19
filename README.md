@@ -123,3 +123,40 @@ functions:
     environment:
       BREF_BINARY_RESPONSES: 1
 ```
+
+### Maintenance mode
+
+You may put your app's functions into maintenance mode quickly without a full build and CloudFormation deploy.
+
+All that's required is setting the `MAINTENANCE_MODE` environment variable:
+
+```yml
+provider:
+  environment:
+    MAINTENANCE_MODE: ${param:maintenance, null}
+```
+
+Then put each function into maintenance mode:
+
+```
+serverless deploy function --function=web --update-config --param="maintenance=1"
+serverless deploy function --function=queue --update-config --param="maintenance=1"
+serverless deploy function --function=cli --update-config --param="maintenance=1"
+```
+
+To disable it, call: 
+
+```
+serverless deploy function --function=web --update-config
+serverless deploy function --function=queue --update-config
+serverless deploy function --function=cli --update-config
+```
+
+One caveat is that all `!Ref` references in `environment` sections of the `serverless.yml` must be converted to strings:
+
+```yml
+provider:
+  environment:
+    SQS_QUEUE: ${!Ref Queue}  # good
+    SQS_QUEUE: !Ref Queue     # bad
+```
