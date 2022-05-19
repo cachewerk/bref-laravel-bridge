@@ -23,9 +23,11 @@ class OctaneHandler extends HttpHandler
             SymfonyRequestBridge::convertRequest($event, $context)
         );
 
-        $response = MaintenanceMode::active()
-            ? MaintenanceMode::response($request)
-            : OctaneClient::handle($request);
+        if (MaintenanceMode::active()) {
+            $response = MaintenanceMode::response($request)->prepare($request);
+        } else {
+            $response = OctaneClient::handle($request);
+        }
 
         return new HttpResponse(
             $response->getContent(),

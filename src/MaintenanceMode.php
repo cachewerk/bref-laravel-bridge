@@ -3,8 +3,9 @@
 namespace CacheWerk\BrefLaravelBridge;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Http\JsonResponse;
+
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class MaintenanceMode
 {
@@ -38,32 +39,22 @@ class MaintenanceMode
      * Returns the maintenance mode response.
      *
      * @param \Illuminate\Http\Response  $request
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public static function response(Request $request)
     {
         if ($request->wantsJson()) {
-            return static::jsonResponse();
+            $file = file_exists($_ENV['LAMBDA_TASK_ROOT'] . '/php/503.json')
+                ? $_ENV['LAMBDA_TASK_ROOT'] . '/php/503.json'
+                : realpath(__DIR__ . '/../stubs/503.json');
+
+            return JsonResponse::fromJsonString(file_get_contents($file), 503);
         }
 
         $file = file_exists($_ENV['LAMBDA_TASK_ROOT'] . '/php/503.html')
             ? $_ENV['LAMBDA_TASK_ROOT'] . '/php/503.html'
-            : realpath(__DIR__ . '/../../stubs/503.html');
+            : realpath(__DIR__ . '/../stubs/503.html');
 
         return new Response(file_get_contents($file), 503);
-    }
-
-    /**
-     * Returns the maintenance mode JSON response.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public static function jsonResponse()
-    {
-        $file = file_exists($_ENV['LAMBDA_TASK_ROOT'] . '/php/503.json')
-            ? $_ENV['LAMBDA_TASK_ROOT'] . '/php/503.json'
-            : realpath(__DIR__ . '/../../stubs/503.json');
-
-        return JsonResponse::fromJsonString(file_get_contents($file), 503);
     }
 }

@@ -29,7 +29,8 @@ provider:
     ASSET_URL: https://${param:assetsBucket}/${sls:instanceId}
     LOG_LEVEL: ${param:logLevel}
     QUEUE_CONNECTION: ${param:queue, 'sqs'}
-    DYNAMODB_CACHE_TABLE: ${!Ref CacheTable}
+    SQS_QUEUE: ${self:service}-${sls:stage}
+    DYNAMODB_CACHE_TABLE: ${self:service}-${sls:stage}-cache
     MAINTENANCE_MODE: ${param:maintenance, null}
   iam:
     role:

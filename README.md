@@ -124,11 +124,11 @@ functions:
       BREF_BINARY_RESPONSES: 1
 ```
 
+
+
 ### Maintenance mode
 
-You may put your app's functions into maintenance mode quickly without a full build and CloudFormation deploy.
-
-All that's required is setting the `MAINTENANCE_MODE` environment variable:
+Similar to the `php artisan down` command, you may put your app into maintenance mode. All that's required is setting the `MAINTENANCE_MODE` environment variable:
 
 ```yml
 provider:
@@ -136,27 +136,29 @@ provider:
     MAINTENANCE_MODE: ${param:maintenance, null}
 ```
 
-Then put each function into maintenance mode:
+You can then quickly put all functions into maintenance without running a full build and CloudFormation deploy:
 
 ```
 serverless deploy function --function=web --update-config --param="maintenance=1"
-serverless deploy function --function=queue --update-config --param="maintenance=1"
 serverless deploy function --function=cli --update-config --param="maintenance=1"
+serverless deploy function --function=queue --update-config --param="maintenance=1"
 ```
 
-To disable it, call: 
+To take your app out of maintenance mode, simply omit the parameter: 
 
 ```
 serverless deploy function --function=web --update-config
-serverless deploy function --function=queue --update-config
 serverless deploy function --function=cli --update-config
+serverless deploy function --function=queue --update-config
 ```
 
-One caveat is that all `!Ref` references in `environment` sections of the `serverless.yml` must be converted to strings:
+One caveat with the `--update-config` flag is that it doesn't objects in `environment` variables in the `serverless.yml`:
 
 ```yml
 provider:
   environment:
-    SQS_QUEUE: ${!Ref Queue}  # good
-    SQS_QUEUE: !Ref Queue     # bad
+    SQS_QUEUE: ${self:service}-${sls:stage}    # good
+    SQS_QUEUE: !Ref QueueName                  # bad
+    SQS_QUEUE:                                 # bad
+      Ref: QueueName
 ```

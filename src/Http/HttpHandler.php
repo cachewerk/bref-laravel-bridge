@@ -37,9 +37,11 @@ class HttpHandler extends BrefHttpHandler
             SymfonyRequestBridge::convertRequest($event, $context)
         );
 
-        $response = MaintenanceMode::active()
-            ? MaintenanceMode::response($request)
-            : $this->kernel->handle($request);
+        if (MaintenanceMode::active()) {
+            $response = MaintenanceMode::response($request);
+        } else {
+            $response = $this->kernel->handle($request);
+        }
 
         $this->kernel->terminate($request, $response);
 
