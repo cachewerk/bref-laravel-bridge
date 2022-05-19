@@ -124,7 +124,17 @@ functions:
       BREF_BINARY_RESPONSES: 1
 ```
 
+## Usage
 
+### Artisan Console
+
+Just like with Bref, you may [execute console commands](https://bref.sh/docs/runtimes/console.html).
+
+```
+vendor/bin/bref cli <service>-<stage>-cli -- route:list
+
+vendor/bin/bref cli example-staging-cli -- route:list
+```
 
 ### Maintenance mode
 
