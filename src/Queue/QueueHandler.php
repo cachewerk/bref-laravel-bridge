@@ -108,7 +108,7 @@ class QueueHandler extends SqsHandler
     protected function raiseBeforeJobEvent(string $connectionName, SqsJob $job): void
     {
         $this->container->make(LogManager::class)
-            ->info("Processing job {$job->getJobId()} ({$job->resolveName()})");
+            ->info("Processing job {$job->getJobId()}", ['name' => $job->resolveName()]);
 
         $this->events->dispatch(new JobProcessing($connectionName, $job));
     }
@@ -119,7 +119,7 @@ class QueueHandler extends SqsHandler
     protected function raiseAfterJobEvent(string $connectionName, SqsJob $job): void
     {
         $this->container->make(LogManager::class)
-            ->info("Processed job {$job->getJobId()} ({$job->resolveName()})");
+            ->info("Processed job {$job->getJobId()}", ['name' => $job->resolveName()]);
 
         $this->events->dispatch(new JobProcessed($connectionName, $job));
     }
@@ -130,7 +130,7 @@ class QueueHandler extends SqsHandler
     protected function raiseExceptionOccurredJobEvent(string $connectionName, SqsJob $job, Throwable $th): void
     {
         $this->container->make(LogManager::class)
-            ->error("Failed job {$job->getJobId()} ({$job->resolveName()})");
+            ->error("Job failed {$job->getJobId()}", ['name' => $job->resolveName()]);
 
         $this->events->dispatch(new JobExceptionOccurred($connectionName, $job, $th));
     }
