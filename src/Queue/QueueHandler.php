@@ -39,7 +39,7 @@ class QueueHandler extends SqsHandler
         protected string $connection,
         protected string $queue,
     ) {
-        $queue = $container->get(QueueManager::class)
+        $queue = $container->make(QueueManager::class)
             ->connection($connection);
 
         if (! $queue instanceof SqsQueue) {
