@@ -2,28 +2,24 @@
 
 namespace CacheWerk\BrefLaravelBridge\Queue;
 
-use Throwable;
+use Aws\Sqs\SqsClient;
 use RuntimeException;
-
 use Bref\Context\Context;
 use Bref\Event\Sqs\SqsEvent;
 use Bref\Event\Sqs\SqsHandler;
-
+use CacheWerk\BrefLaravelBridge\MaintenanceMode;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-
-use Illuminate\Log\LogManager;
-
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Queue\Jobs\SqsJob;
 use Illuminate\Queue\QueueManager;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\WorkerOptions;
 
 class QueueHandler extends SqsHandler
 {
+    protected SqsClient $sqs;
+
     /**
      * Creates a new SQS queue handler instance.
      *
@@ -60,78 +56,61 @@ class QueueHandler extends SqsHandler
      */
     public function handleSqs(SqsEvent $event, Context $context): void
     {
+        $worker = $this->container->makeWith(Worker::class, [
+            'isDownForMaintenance' => fn () => MaintenanceMode::active(),
+        ]);
+
         foreach ($event->getRecords() as $sqsRecord) {
-            $recordData = $sqsRecord->toArray();
+            $message = $this->normalizeMessage($sqsRecord->toArray());
 
-            $jobData = [
-                'MessageId' => $recordData['messageId'],
-                'ReceiptHandle' => $recordData['receiptHandle'],
-                'Attributes' => $recordData['attributes'],
-                'Body' => $recordData['body'],
-            ];
-
-            $job = new SqsJob(
-                $this->container,
-                $this->sqs,
-                $jobData,
+            $worker->runSqsJob(
+                $this->buildJob($message),
                 $this->connection,
-                $this->queue,
+                $this->getWorkerOptions()
             );
-
-            $this->process($this->connection, $job);
         }
     }
 
-    /**
-     * @see \Illuminate\Queue\Worker::process()
-     */
-    protected function process(string $connectionName, SqsJob $job): void
+    protected function normalizeMessage(array $message): array
     {
-        try {
-            $this->raiseBeforeJobEvent($connectionName, $job);
+        return [
+            'MessageId' => $message['messageId'],
+            'ReceiptHandle' => $message['receiptHandle'],
+            'Body' => $message['body'],
+            'Attributes' => $message['attributes'],
+            'MessageAttributes' => $message['messageAttributes'],
+        ];
+    }
 
-            $job->fire();
+    protected function buildJob(array $message): SqsJob
+    {
+        return new SqsJob(
+            $this->container,
+            $this->sqs,
+            $message,
+            $this->connection,
+            $this->queue,
+        );
+    }
 
-            $this->raiseAfterJobEvent($connectionName, $job);
-        } catch (Throwable $exception) {
-            $this->raiseExceptionOccurredJobEvent($connectionName, $job, $exception);
+    protected function getWorkerOptions(): WorkerOptions
+    {
+        $options = [
+            $backoff = 0,
+            $memory = 512,
+            $timeout = 0,
+            $sleep = 0,
+            $maxTries = 3,
+            $force = false,
+            $stopWhenEmpty = false,
+            $maxJobs = 0,
+            $maxTime = 0,
+        ];
 
-            $this->exceptions->report($exception);
-
-            throw $exception;
+        if (property_exists(WorkerOptions::class, 'name')) {
+            $options = array_merge(['default'], $options);
         }
-    }
 
-    /**
-     * @see \Illuminate\Queue\Worker::raiseBeforeJobEvent()
-     */
-    protected function raiseBeforeJobEvent(string $connectionName, SqsJob $job): void
-    {
-        $this->container->make(LogManager::class)
-            ->info("Processing job {$job->getJobId()}", ['name' => $job->resolveName()]);
-
-        $this->events->dispatch(new JobProcessing($connectionName, $job));
-    }
-
-    /**
-     * @see \Illuminate\Queue\Worker::raiseAfterJobEvent()
-     */
-    protected function raiseAfterJobEvent(string $connectionName, SqsJob $job): void
-    {
-        $this->container->make(LogManager::class)
-            ->info("Processed job {$job->getJobId()}", ['name' => $job->resolveName()]);
-
-        $this->events->dispatch(new JobProcessed($connectionName, $job));
-    }
-
-    /**
-     * @see \Illuminate\Queue\Worker::raiseExceptionOccurredJobEvent()
-     */
-    protected function raiseExceptionOccurredJobEvent(string $connectionName, SqsJob $job, Throwable $th): void
-    {
-        $this->container->make(LogManager::class)
-            ->error("Job failed {$job->getJobId()}", ['name' => $job->resolveName()]);
-
-        $this->events->dispatch(new JobExceptionOccurred($connectionName, $job, $th));
+        return new WorkerOptions(...$options);
     }
 }
