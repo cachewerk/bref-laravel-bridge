@@ -71,10 +71,8 @@ class QueueHandler extends SqsHandler
         ]);
 
         foreach ($event->getRecords() as $sqsRecord) {
-            $message = $this->normalizeMessage($sqsRecord->toArray());
-
             $worker->runSqsJob(
-                $this->buildJob($message),
+                $this->buildJob($sqsRecord),
                 $this->connection,
                 $this->gatherWorkerOptions()
             );
@@ -82,30 +80,21 @@ class QueueHandler extends SqsHandler
     }
 
     /**
-     * ...
+     * Convert Bref SQS record to Laravel SQS job.
      * 
-     * @param  array  $message 
-     * @return array 
-     */
-    protected function normalizeMessage(array $message): array
-    {
-        return [
-            'MessageId' => $message['messageId'],
-            'ReceiptHandle' => $message['receiptHandle'],
-            'Body' => $message['body'],
-            'Attributes' => $message['attributes'],
-            'MessageAttributes' => $message['messageAttributes'],
-        ];
-    }
-
-    /**
-     * Convert SQS message to Laravel SQS job.
-     * 
-     * @param  array  $message 
+     * @param  \Bref\Event\Sqs\SqsRecord  $sqsRecord 
      * @return \Illuminate\Queue\Jobs\SqsJob 
      */
-    protected function buildJob(array $message): SqsJob
+    protected function buildJob(SqsRecord $sqsRecord): SqsJob
     {
+        $message = [
+            'MessageId' => $sqsRecord->getMessageId(),
+            'ReceiptHandle' => $sqsRecord->getReceiptHandle(),
+            'Body' => $sqsRecord->getBody(),
+            'Attributes' => $sqsRecord->toArray()['attributes'],
+            'MessageAttributes' => $sqsRecord->getMessageAttributes(),
+        ];
+    
         return new SqsJob(
             $this->container,
             $this->sqs,
