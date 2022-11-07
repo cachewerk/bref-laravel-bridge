@@ -72,7 +72,7 @@ class QueueHandler extends SqsHandler
 
         foreach ($event->getRecords() as $sqsRecord) {
             $worker->runSqsJob(
-                $this->buildJob($sqsRecord),
+                $this->marshalJob($sqsRecord),
                 $this->connection,
                 $this->gatherWorkerOptions()
             );
@@ -80,12 +80,12 @@ class QueueHandler extends SqsHandler
     }
 
     /**
-     * Convert Bref SQS record to Laravel SQS job.
+     * Marshal the job with the given Bref SQS record.
      * 
      * @param  \Bref\Event\Sqs\SqsRecord  $sqsRecord 
      * @return \Illuminate\Queue\Jobs\SqsJob 
      */
-    protected function buildJob(SqsRecord $sqsRecord): SqsJob
+    protected function marshalJob(SqsRecord $sqsRecord): SqsJob
     {
         $message = [
             'MessageId' => $sqsRecord->getMessageId(),
