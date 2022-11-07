@@ -14,7 +14,6 @@ class SqsJob extends LaravelSqsJob
         $this->released = true;
 
         $payload = $this->payload();
-
         $payload['attempts'] = ($payload['attempts'] ?? 0) + 1;
 
         $this->sqs->deleteMessage([
