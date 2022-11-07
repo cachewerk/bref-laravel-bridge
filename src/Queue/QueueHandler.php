@@ -2,22 +2,32 @@
 
 namespace CacheWerk\BrefLaravelBridge\Queue;
 
-use Aws\Sqs\SqsClient;
 use RuntimeException;
+
+use Aws\Sqs\SqsClient;
+
 use Bref\Context\Context;
 use Bref\Event\Sqs\SqsEvent;
 use Bref\Event\Sqs\SqsHandler;
-use CacheWerk\BrefLaravelBridge\MaintenanceMode;
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Debug\ExceptionHandler;
+
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Queue\Jobs\SqsJob;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Queue\WorkerOptions;
 
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+
+use CacheWerk\BrefLaravelBridge\MaintenanceMode;
+
 class QueueHandler extends SqsHandler
 {
+    /**
+     * The AWS SQS client.
+     *
+     * @var \Aws\Sqs\SqsClient
+     */
     protected SqsClient $sqs;
 
     /**
@@ -26,7 +36,7 @@ class QueueHandler extends SqsHandler
      * @param  \Illuminate\Container\Container  $container
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $exceptions
-     * @param  string  $connection
+     * @param  string  $connectionName
      * @param  string  $queue
      * @return void
      */
@@ -34,11 +44,11 @@ class QueueHandler extends SqsHandler
         protected Container $container,
         protected Dispatcher $events,
         protected ExceptionHandler $exceptions,
-        protected string $connection,
+        protected string $connectionName,
         protected string $queue,
     ) {
         $queue = $container->make(QueueManager::class)
-            ->connection($connection);
+            ->connection($connectionName);
 
         if (! $queue instanceof SqsQueue) {
             throw new RuntimeException('Default queue connection is not a SQS connection');
@@ -66,11 +76,17 @@ class QueueHandler extends SqsHandler
             $worker->runSqsJob(
                 $this->buildJob($message),
                 $this->connection,
-                $this->getWorkerOptions()
+                $this->gatherWorkerOptions()
             );
         }
     }
 
+    /**
+     * ...
+     * 
+     * @param  array  $message 
+     * @return array 
+     */
     protected function normalizeMessage(array $message): array
     {
         return [
@@ -82,6 +98,12 @@ class QueueHandler extends SqsHandler
         ];
     }
 
+    /**
+     * Convert SQS message to Laravel SQS job.
+     * 
+     * @param  array  $message 
+     * @return \Illuminate\Queue\Jobs\SqsJob 
+     */
     protected function buildJob(array $message): SqsJob
     {
         return new SqsJob(
@@ -93,18 +115,23 @@ class QueueHandler extends SqsHandler
         );
     }
 
-    protected function getWorkerOptions(): WorkerOptions
+    /**
+     * Gather all of the queue worker options as a single object.
+     * 
+     * @return \Illuminate\Queue\WorkerOptions 
+     */
+    protected function gatherWorkerOptions(): WorkerOptions
     {
         $options = [
-            $backoff = 0,
-            $memory = 512,
-            $timeout = 0,
-            $sleep = 0,
-            $maxTries = 3,
-            $force = false,
-            $stopWhenEmpty = false,
-            $maxJobs = 0,
-            $maxTime = 0,
+            0, // backoff
+            512, // memory
+            0, // timeout
+            0, // sleep
+            3, // maxTries
+            false, // force
+            false, // stopWhenEmpty
+            0, // maxJobs
+            0, // maxTime
         ];
 
         if (property_exists(WorkerOptions::class, 'name')) {
