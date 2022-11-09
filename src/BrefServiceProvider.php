@@ -2,16 +2,19 @@
 
 namespace CacheWerk\BrefLaravelBridge;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Monolog\Formatter\JsonFormatter;
 
 use Illuminate\Log\LogManager;
-use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Queue\Events\JobExceptionOccurred;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Events\JobProcessing;
+
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
+
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Contracts\Events\Dispatcher;
+
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Queue\Events\JobExceptionOccurred;
 
 class BrefServiceProvider extends ServiceProvider
 {
@@ -76,9 +79,26 @@ class BrefServiceProvider extends ServiceProvider
             ], 'bref-runtime');
         }
 
-        $dispatcher->listen(fn (JobProcessing $event) => $logManager->info("Processing job {$event->job->getJobId()}", ['name' => $event->job->resolveName()]));
-        $dispatcher->listen(fn (JobProcessed $event) => $logManager->info("Processed job {$event->job->getJobId()}", ['name' => $event->job->resolveName()]));
-        $dispatcher->listen(fn (JobExceptionOccurred $event) => $logManager->info("Job failed {$event->job->getJobId()}", ['name' => $event->job->resolveName()]));
+        $dispatcher->listen(
+            fn (JobProcessing $event) => $logManager->info(
+                "Processing job {$event->job->getJobId()}",
+                ['name' => $event->job->resolveName()]
+            )
+        );
+
+        $dispatcher->listen(
+            fn (JobProcessed $event) => $logManager->info(
+                "Processed job {$event->job->getJobId()}",
+                ['name' => $event->job->resolveName()]
+            )
+        );
+
+        $dispatcher->listen(
+            fn (JobExceptionOccurred $event) => $logManager->info(
+                "Job failed {$event->job->getJobId()}",
+                ['name' => $event->job->resolveName()]
+            )
+        );
     }
 
     /**
