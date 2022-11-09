@@ -2,7 +2,6 @@
 
 namespace CacheWerk\BrefLaravelBridge\Queue;
 
-use CacheWerk\BrefLaravelBridge\Queue\Exceptions\JobTimedOutException;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\WorkerOptions;
 use Illuminate\Queue\Worker as LaravelWorker;
