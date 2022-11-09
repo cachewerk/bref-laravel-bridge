@@ -43,7 +43,7 @@ class QueueHandler extends SqsHandler
      * @param  \Illuminate\Container\Container  $container
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $exceptions
-     * @param  string  $connectionName
+     * @param  string  $connection
      * @param  string  $queue
      * @return void
      */
@@ -51,11 +51,11 @@ class QueueHandler extends SqsHandler
         protected Container $container,
         protected Dispatcher $events,
         protected ExceptionHandler $exceptions,
-        protected string $connectionName,
+        protected string $connection,
         protected string $queue,
     ) {
         $queue = $container->make(QueueManager::class)
-            ->connection($connectionName);
+            ->connection($connection);
 
         if (! $queue instanceof SqsQueue) {
             throw new RuntimeException('Default queue connection is not a SQS connection');
