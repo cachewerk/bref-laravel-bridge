@@ -31,7 +31,7 @@ class QueueHandler extends SqsHandler
     protected SqsClient $sqs;
 
     /**
-     * Number of seconds before lambda invocation deadline to timeout the job.
+     * Number of seconds before Lambda invocation deadline to timeout the job.
      *
      * @var float
      */
@@ -86,7 +86,7 @@ class QueueHandler extends SqsHandler
                 $this->gatherWorkerOptions($timeout),
             );
 
-            if (! $job->hasFailed() and ! $job->isDeleted()) {
+            if (! $job->hasFailed() && ! $job->isDeleted()) {
                 $job->delete();
             }
         }
@@ -120,7 +120,7 @@ class QueueHandler extends SqsHandler
     /**
      * Gather all of the queue worker options as a single object.
      *
-     * @param int $timeout
+     * @param  int  $timeout
      * @return \Illuminate\Queue\WorkerOptions
      */
     protected function gatherWorkerOptions(int $timeout): WorkerOptions
@@ -147,11 +147,11 @@ class QueueHandler extends SqsHandler
     /**
      * Calculate the timeout for a job
      *
-     * @param int $remainingInvocationTimeInMs
+     * @param  int  $remainingInvocationTimeInMs
      * @return int
      */
     protected function calculateJobTimeout(int $remainingInvocationTimeInMs): int
     {
-        return max(intval(($remainingInvocationTimeInMs - self::JOB_TIMEOUT_SAFETY_MARGIN) / 1000), 0);
+        return max((int) (($remainingInvocationTimeInMs - self::JOB_TIMEOUT_SAFETY_MARGIN) / 1000), 0);
     }
 }
