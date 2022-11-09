@@ -5,6 +5,7 @@ namespace CacheWerk\BrefLaravelBridge\Queue;
 use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\WorkerOptions;
 use Illuminate\Queue\Worker as LaravelWorker;
+use Throwable;
 
 class Worker extends LaravelWorker
 {
@@ -35,5 +36,20 @@ class Worker extends LaravelWorker
         $this->runJob($job, $connectionName, $options);
 
         pcntl_alarm(0); // cancel the previous alarm
+    }
+
+    /**
+     * Mark the given job as failed if it should fail on timeouts.
+     *
+     * @param  string  $connectionName
+     * @param  \Illuminate\Contracts\Queue\Job  $job
+     * @param  \Throwable  $e
+     * @return void
+     */
+    protected function markJobAsFailedIfItShouldFailOnTimeout($connectionName, $job, Throwable $e)
+    {
+        if (method_exists($job, 'shouldFailOnTimeout') ? $job->shouldFailOnTimeout() : true) {
+            $this->failJob($job, $e);
+        }
     }
 }
