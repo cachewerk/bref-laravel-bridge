@@ -71,10 +71,12 @@ class QueueHandler extends SqsHandler
         ]);
 
         foreach ($event->getRecords() as $sqsRecord) {
+            $timeout = $this->calculateJobTimeout($context->getRemainingTimeInMillis());
+
             $worker->runSqsJob(
                 $this->marshalJob($sqsRecord),
                 $this->connection,
-                $this->gatherWorkerOptions()
+                $this->gatherWorkerOptions($timeout),
             );
         }
     }
@@ -107,14 +109,15 @@ class QueueHandler extends SqsHandler
     /**
      * Gather all of the queue worker options as a single object.
      *
+     * @param int $timeout
      * @return \Illuminate\Queue\WorkerOptions
      */
-    protected function gatherWorkerOptions(): WorkerOptions
+    protected function gatherWorkerOptions(int $timeout): WorkerOptions
     {
         $options = [
             0, // backoff
             512, // memory
-            0, // timeout
+            $timeout, // timeout
             0, // sleep
             3, // maxTries
             false, // force
@@ -128,5 +131,18 @@ class QueueHandler extends SqsHandler
         }
 
         return new WorkerOptions(...$options);
+    }
+
+    /**
+     * Calculate the timeout for a job
+     *
+     * @param int $remainingInvocationTimeInMs
+     * @return int
+     */
+    protected function calculateJobTimeout(int $remainingInvocationTimeInMs): int
+    {
+        $satetyMarginInMs = 500;
+
+        return max(intval(($remainingInvocationTimeInMs - $satetyMarginInMs) / 1000), 0);
     }
 }
