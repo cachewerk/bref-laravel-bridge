@@ -22,7 +22,11 @@ class Worker extends LaravelWorker
         pcntl_async_signals(true);
 
         pcntl_signal(SIGALRM, function () use ($job) {
-            throw new JobTimedOutException($job->resolveName());
+            $this->markJobAsFailedIfItShouldFailOnTimeout(
+                $job->getConnectionName(),
+                $job,
+                $this->maxAttemptsExceededException($job),
+            );
         });
 
         pcntl_alarm(
@@ -31,6 +35,6 @@ class Worker extends LaravelWorker
 
         $this->runJob($job, $connectionName, $options);
 
-        pcntl_alarm(0);
+        pcntl_alarm(0); // cancel the previous alarm
     }
 }

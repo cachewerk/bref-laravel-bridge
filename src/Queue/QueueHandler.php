@@ -10,11 +10,11 @@ use Bref\Context\Context;
 use Bref\Event\Sqs\SqsEvent;
 use Bref\Event\Sqs\SqsHandler;
 use Bref\Event\Sqs\SqsRecord;
+
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Queue\Jobs\SqsJob;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Queue\WorkerOptions;
-
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Debug\ExceptionHandler;
@@ -29,6 +29,13 @@ class QueueHandler extends SqsHandler
      * @var \Aws\Sqs\SqsClient
      */
     protected SqsClient $sqs;
+
+    /**
+     * Number of seconds before lambda invocation deadline to timeout the job.
+     *
+     * @var float
+     */
+    protected const JOB_TIMEOUT_SAFETY_MARGIN = 1.0;
 
     /**
      * Creates a new SQS queue handler instance.
@@ -141,8 +148,6 @@ class QueueHandler extends SqsHandler
      */
     protected function calculateJobTimeout(int $remainingInvocationTimeInMs): int
     {
-        $satetyMarginInMs = 500;
-
-        return max(intval(($remainingInvocationTimeInMs - $satetyMarginInMs) / 1000), 0);
+        return max(intval(($remainingInvocationTimeInMs - self::JOB_TIMEOUT_SAFETY_MARGIN) / 1000), 0);
     }
 }
