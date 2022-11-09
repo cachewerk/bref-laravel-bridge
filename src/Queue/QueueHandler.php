@@ -81,10 +81,14 @@ class QueueHandler extends SqsHandler
             $timeout = $this->calculateJobTimeout($context->getRemainingTimeInMillis());
 
             $worker->runSqsJob(
-                $this->marshalJob($sqsRecord),
+                $job = $this->marshalJob($sqsRecord),
                 $this->connection,
                 $this->gatherWorkerOptions($timeout),
             );
+
+            if (! $job->hasFailed() and ! $job->isDeleted()) {
+                $job->delete();
+            }
         }
     }
 
