@@ -2,10 +2,14 @@
 
 namespace CacheWerk\BrefLaravelBridge;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Monolog\Formatter\JsonFormatter;
 
 use Illuminate\Log\LogManager;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Queue\Events\JobExceptionOccurred;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
@@ -60,7 +64,7 @@ class BrefServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(Dispatcher $dispatcher, LogManager $logManager)
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -71,6 +75,10 @@ class BrefServiceProvider extends ServiceProvider
                 __DIR__ . '/../stubs/runtime.php' => base_path('php/runtime.php'),
             ], 'bref-runtime');
         }
+
+        $dispatcher->listen(fn (JobProcessing $event) => $logManager->info("Processing job {$event->job->getJobId()}", ['name' => $event->job->resolveName()]));
+        $dispatcher->listen(fn (JobProcessed $event) => $logManager->info("Processed job {$event->job->getJobId()}", ['name' => $event->job->resolveName()]));
+        $dispatcher->listen(fn (JobExceptionOccurred $event) => $logManager->info("Job failed {$event->job->getJobId()}", ['name' => $event->job->resolveName()]));
     }
 
     /**

@@ -9,7 +9,7 @@ use Aws\Sqs\SqsClient;
 use Bref\Context\Context;
 use Bref\Event\Sqs\SqsEvent;
 use Bref\Event\Sqs\SqsHandler;
-
+use Bref\Event\Sqs\SqsRecord;
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Queue\Jobs\SqsJob;
 use Illuminate\Queue\QueueManager;
@@ -81,9 +81,9 @@ class QueueHandler extends SqsHandler
 
     /**
      * Marshal the job with the given Bref SQS record.
-     * 
-     * @param  \Bref\Event\Sqs\SqsRecord  $sqsRecord 
-     * @return \Illuminate\Queue\Jobs\SqsJob 
+     *
+     * @param  \Bref\Event\Sqs\SqsRecord  $sqsRecord
+     * @return \Illuminate\Queue\Jobs\SqsJob
      */
     protected function marshalJob(SqsRecord $sqsRecord): SqsJob
     {
@@ -94,7 +94,7 @@ class QueueHandler extends SqsHandler
             'Attributes' => $sqsRecord->toArray()['attributes'],
             'MessageAttributes' => $sqsRecord->getMessageAttributes(),
         ];
-    
+
         return new SqsJob(
             $this->container,
             $this->sqs,
@@ -106,8 +106,8 @@ class QueueHandler extends SqsHandler
 
     /**
      * Gather all of the queue worker options as a single object.
-     * 
-     * @return \Illuminate\Queue\WorkerOptions 
+     *
+     * @return \Illuminate\Queue\WorkerOptions
      */
     protected function gatherWorkerOptions(): WorkerOptions
     {
