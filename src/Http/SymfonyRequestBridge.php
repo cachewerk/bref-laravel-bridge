@@ -7,6 +7,7 @@ use RuntimeException;
 use Bref\Context\Context;
 use Bref\Event\Http\HttpRequestEvent;
 
+use Illuminate\Support\Str;
 use Riverline\MultiPartParser\StreamedPart;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -84,7 +85,7 @@ class SymfonyRequestBridge
         $contentType = $event->getContentType();
 
         if (null !== $contentType && 'POST' === $event->getMethod()) {
-            if ('application/x-www-form-urlencoded' === $contentType) {
+            if (Str::startsWith($contentType, 'application/x-www-form-urlencoded')) {
                 parse_str($bodyString, $parsedBody);
             } else {
                 $stream = fopen('php://temp', 'rw');
