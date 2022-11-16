@@ -68,7 +68,7 @@ if ($runtime === 'octane') {
         (bool) ($_ENV['OCTANE_PERSIST_DATABASE_SESSIONS'] ?? false)
     );
 
-    return new OctaneHandler();
+    return new OctaneHandler;
 }
 
 return new HttpHandler(
