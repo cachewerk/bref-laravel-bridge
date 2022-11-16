@@ -10,6 +10,7 @@ use Laravel\Octane\Contracts\Client;
 use Laravel\Octane\ApplicationFactory;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Symfony\Component\HttpFoundation\Response;
 
 class OctaneClient implements Client
@@ -24,7 +25,7 @@ class OctaneClient implements Client
     /**
      * The Octane response.
      *
-     * @var \Laravel\Octane\OctaneResponse
+     * @var \Laravel\Octane\OctaneResponse|null
      */
     protected static $response;
 
@@ -94,7 +95,7 @@ class OctaneClient implements Client
      */
     public function marshalRequest(RequestContext $context): array
     {
-        //
+        return [];
     }
 
     /**
