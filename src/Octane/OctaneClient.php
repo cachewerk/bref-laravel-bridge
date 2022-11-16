@@ -97,7 +97,7 @@ class OctaneClient implements Client
      */
     public function marshalRequest(RequestContext $context): array
     {
-        //
+        return [];
     }
 
     /**
