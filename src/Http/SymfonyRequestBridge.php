@@ -104,7 +104,13 @@ class SymfonyRequestBridge
                             }
                             file_put_contents($tmpPath, $part->getBody());
                             if (0 !== filesize($tmpPath) && '' !== $part->getFileName()) {
-                                $file = new UploadedFile($tmpPath, $part->getFileName(), $part->getMimeType(), UPLOAD_ERR_OK, true);
+                                $file = new UploadedFile(
+                                    $tmpPath,
+                                    $part->getFileName(),
+                                    $part->getMimeType(),
+                                    UPLOAD_ERR_OK,
+                                    true
+                                );
                             } else {
                                 $file = null;
                             }
