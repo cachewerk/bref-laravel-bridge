@@ -10,6 +10,7 @@ use Laravel\Octane\OctaneResponse;
 use Laravel\Octane\Contracts\Client;
 use Laravel\Octane\ApplicationFactory;
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 
