@@ -34,7 +34,7 @@ class Secrets
         }
 
         if (! empty($injected)) {
-            fwrite(STDERR, 'Injected runtime secrets: ' . implode(', ', $injected) . PHP_EOL);
+            // fwrite(STDERR, 'Injected runtime secrets: ' . implode(', ', $injected) . PHP_EOL);
         }
     }
 }
