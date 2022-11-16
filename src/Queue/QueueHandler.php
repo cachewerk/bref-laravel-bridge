@@ -3,14 +3,11 @@
 namespace CacheWerk\BrefLaravelBridge\Queue;
 
 use RuntimeException;
-
 use Aws\Sqs\SqsClient;
-
 use Bref\Context\Context;
 use Bref\Event\Sqs\SqsEvent;
 use Bref\Event\Sqs\SqsHandler;
 use Bref\Event\Sqs\SqsRecord;
-
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Queue\Jobs\SqsJob;
 use Illuminate\Queue\QueueManager;
@@ -18,7 +15,6 @@ use Illuminate\Queue\WorkerOptions;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-
 use CacheWerk\BrefLaravelBridge\MaintenanceMode;
 
 class QueueHandler extends SqsHandler

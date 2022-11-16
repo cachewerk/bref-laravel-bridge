@@ -4,9 +4,7 @@ namespace CacheWerk\BrefLaravelBridge\Http;
 
 use CacheWerk\BrefLaravelBridge\MaintenanceMode;
 use CacheWerk\BrefLaravelBridge\Octane\OctaneClient;
-
 use Illuminate\Http\Request;
-
 use Bref\Context\Context;
 use Bref\Event\Http\HttpHandler;
 use Bref\Event\Http\HttpResponse;

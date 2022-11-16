@@ -3,10 +3,8 @@
 namespace CacheWerk\BrefLaravelBridge\Http;
 
 use RuntimeException;
-
 use Bref\Context\Context;
 use Bref\Event\Http\HttpRequestEvent;
-
 use Riverline\MultiPartParser\StreamedPart;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -88,7 +86,7 @@ class SymfonyRequestBridge
                 parse_str($bodyString, $parsedBody);
             } else {
                 $stream = fopen('php://temp', 'rw');
-                fwrite($stream, "Content-type: $contentType\r\n\r\n".$bodyString);
+                fwrite($stream, "Content-type: $contentType\r\n\r\n" . $bodyString);
                 rewind($stream);
 
                 $document = new StreamedPart($stream);
@@ -104,7 +102,13 @@ class SymfonyRequestBridge
                             }
                             file_put_contents($tmpPath, $part->getBody());
                             if (0 !== filesize($tmpPath) && '' !== $part->getFileName()) {
-                                $file = new UploadedFile($tmpPath, $part->getFileName(), $part->getMimeType(), UPLOAD_ERR_OK, true);
+                                $file = new UploadedFile(
+                                    $tmpPath,
+                                    $part->getFileName(),
+                                    $part->getMimeType(),
+                                    UPLOAD_ERR_OK,
+                                    true
+                                );
                             } else {
                                 $file = null;
                             }

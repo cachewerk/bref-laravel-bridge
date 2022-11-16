@@ -3,7 +3,6 @@
 namespace CacheWerk\BrefLaravelBridge;
 
 use Illuminate\Http\Request;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 

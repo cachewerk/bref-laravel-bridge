@@ -3,10 +3,8 @@
 namespace CacheWerk\BrefLaravelBridge\Http;
 
 use CacheWerk\BrefLaravelBridge\MaintenanceMode;
-
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Http\Kernel;
-
 use Bref\Context\Context;
 use Bref\Event\Http\HttpResponse;
 use Bref\Event\Http\HttpRequestEvent;
@@ -22,7 +20,8 @@ class HttpHandler extends BrefHttpHandler
      */
     public function __construct(
         protected Kernel $kernel
-    ) {}
+    ) {
+    }
 
     /**
      * Handle given HTTP request event.

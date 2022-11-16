@@ -3,16 +3,13 @@
 namespace CacheWerk\BrefLaravelBridge\Octane;
 
 use Throwable;
-
 use Laravel\Octane\Worker;
 use Laravel\Octane\RequestContext;
 use Laravel\Octane\OctaneResponse;
 use Laravel\Octane\Contracts\Client;
 use Laravel\Octane\ApplicationFactory;
-
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
-
 use Symfony\Component\HttpFoundation\Response;
 
 class OctaneClient implements Client
@@ -41,7 +38,7 @@ class OctaneClient implements Client
     public static function boot(string $basePath, bool $persistDatabaseSession)
     {
         static::$worker = tap(
-            new Worker(new ApplicationFactory($basePath), new self)
+            new Worker(new ApplicationFactory($basePath), new self())
         )->boot()->onRequestHandled(
             static::manageDatabaseSessions($persistDatabaseSession)
         );
@@ -57,7 +54,7 @@ class OctaneClient implements Client
     {
         static::$worker->application()->useStoragePath('/tmp/storage');
 
-        static::$worker->handle($request, new RequestContext);
+        static::$worker->handle($request, new RequestContext());
 
         $response = clone static::$response->response;
         static::$response = null;

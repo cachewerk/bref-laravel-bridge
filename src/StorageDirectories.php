@@ -9,7 +9,7 @@ class StorageDirectories
      *
      * @var string
      */
-    public const Path = '/tmp/storage';
+    public const PATH = '/tmp/storage';
 
     /**
      * Ensure the necessary storage directories exist.
@@ -19,11 +19,11 @@ class StorageDirectories
     public static function create()
     {
         $directories = [
-            // self::Path . '/app',
-            // self::Path . '/logs',
-            self::Path . '/bootstrap/cache',
-            self::Path . '/framework/cache',
-            self::Path . '/framework/views',
+            // self::PATH . '/app',
+            // self::PATH . '/logs',
+            self::PATH . '/bootstrap/cache',
+            self::PATH . '/framework/cache',
+            self::PATH . '/framework/views',
         ];
 
         foreach ($directories as $directory) {

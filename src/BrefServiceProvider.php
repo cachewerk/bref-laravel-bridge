@@ -3,15 +3,11 @@
 namespace CacheWerk\BrefLaravelBridge;
 
 use Monolog\Formatter\JsonFormatter;
-
 use Illuminate\Log\LogManager;
-
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
-
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Events\Dispatcher;
-
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobExceptionOccurred;
@@ -59,7 +55,10 @@ class BrefServiceProvider extends ServiceProvider
         Config::set('queue.connections.sqs.key');
         Config::set('queue.connections.sqs.secret');
         Config::set('queue.connections.sqs.token', env('AWS_SESSION_TOKEN'));
-        Config::set('queue.connections.sqs.prefix', env('SQS_PREFIX', "https://sqs.{$region}.amazonaws.com/{$account}"));
+        Config::set(
+            'queue.connections.sqs.prefix',
+            env('SQS_PREFIX', "https://sqs.{$region}.amazonaws.com/{$account}")
+        );
     }
 
     /**
