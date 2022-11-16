@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<ruleset name="CacheWerk" namespace="CacheWerk\BrefLaravelBridge">
+    <rule ref="PSR1">
+        <exclude name="Generic.NamingConventions.UpperCaseConstantName" />
+    </rule>
+
+    <rule ref="PSR12">
+        <exclude name="PSR12.Files.FileHeader" />
+        <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses" />
+    </rule>
+</ruleset>

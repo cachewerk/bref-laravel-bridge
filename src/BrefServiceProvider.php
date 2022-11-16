@@ -3,6 +3,7 @@
 namespace CacheWerk\BrefLaravelBridge;
 
 use Monolog\Formatter\JsonFormatter;
+
 use Illuminate\Log\LogManager;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
