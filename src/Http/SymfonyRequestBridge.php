@@ -88,7 +88,7 @@ class SymfonyRequestBridge
                 parse_str($bodyString, $parsedBody);
             } else {
                 $stream = fopen('php://temp', 'rw');
-                fwrite($stream, "Content-type: $contentType\r\n\r\n".$bodyString);
+                fwrite($stream, "Content-type: {$contentType}\r\n\r\n{$bodyString}");
                 rewind($stream);
 
                 $document = new StreamedPart($stream);
