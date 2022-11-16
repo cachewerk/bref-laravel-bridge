@@ -7,8 +7,10 @@ use CacheWerk\BrefLaravelBridge\Http\OctaneHandler;
 use CacheWerk\BrefLaravelBridge\Queue\QueueHandler;
 use CacheWerk\BrefLaravelBridge\StorageDirectories;
 use CacheWerk\BrefLaravelBridge\Octane\OctaneClient;
+
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
+
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 
@@ -35,7 +37,7 @@ if ($runtime === 'cli') {
     MaintenanceMode::setUp();
 
     $kernel = $app->make(ConsoleKernel::class);
-    $status = $kernel->handle($input = new ArgvInput(), new ConsoleOutput());
+    $status = $kernel->handle($input = new ArgvInput, new ConsoleOutput);
     $kernel->terminate($input, $status);
 
     exit($status);

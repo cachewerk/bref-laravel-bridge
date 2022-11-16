@@ -22,8 +22,7 @@ class HttpHandler extends BrefHttpHandler
      */
     public function __construct(
         protected Kernel $kernel
-    ) {
-    }
+    ) {}
 
     /**
      * Handle given HTTP request event.

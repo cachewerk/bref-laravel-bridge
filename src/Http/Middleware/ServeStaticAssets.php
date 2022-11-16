@@ -3,6 +3,7 @@
 namespace CacheWerk\BrefLaravelBridge\Http\Middleware;
 
 use Closure;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Response;
