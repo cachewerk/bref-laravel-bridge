@@ -12,7 +12,6 @@ use Bref\Event\Sqs\SqsHandler;
 use Bref\Event\Sqs\SqsRecord;
 
 use Illuminate\Queue\SqsQueue;
-use Illuminate\Queue\Jobs\SqsJob;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Queue\WorkerOptions;
 use Illuminate\Container\Container;
