@@ -30,6 +30,10 @@ class OctaneHandler extends HttpHandler
         } else {
             $response = OctaneClient::handle($request);
         }
+        
+        if (! $response->headers->has('Content-Type')) {
+            $response->prepare($request); // https://github.com/laravel/framework/pull/43895
+        }
 
         $content = $response instanceof BinaryFileResponse
             ? $response->getFile()->getContent()
