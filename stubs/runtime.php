@@ -16,7 +16,6 @@ use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-// Ensure we have a handle to stderr
 if (! defined('STDERR')) {
     define('STDERR', fopen('php://stderr', 'wb'));
 }
