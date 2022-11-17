@@ -31,8 +31,6 @@ class OctaneHandler extends HttpHandler
             $response = OctaneClient::handle($request);
         }
 
-        $response->prepare($request);
-
         $content = $response instanceof BinaryFileResponse
             ? $response->getFile()->getContent()
             : $response->getContent();
