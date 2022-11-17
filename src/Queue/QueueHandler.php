@@ -95,7 +95,7 @@ class QueueHandler extends SqsHandler
      * Marshal the job with the given Bref SQS record.
      *
      * @param  \Bref\Event\Sqs\SqsRecord  $sqsRecord
-     * @return \Illuminate\Queue\Jobs\SqsJob
+     * @return \CacheWerk\BrefLaravelBridge\Queue\SqsJob
      */
     protected function marshalJob(SqsRecord $sqsRecord): SqsJob
     {
