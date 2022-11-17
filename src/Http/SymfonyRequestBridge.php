@@ -22,7 +22,7 @@ class SymfonyRequestBridge
         $psr7Request = Psr7Bridge::convertRequest($event, $context);
         $httpFoundationFactory = new HttpFoundationFactory();
         $symfonyRequest = $httpFoundationFactory->createRequest($psr7Request);
-
+        
         return $symfonyRequest;
     }
 }
