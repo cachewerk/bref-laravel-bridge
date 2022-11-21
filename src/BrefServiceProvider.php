@@ -12,10 +12,10 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Events\Dispatcher;
 
+use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobExceptionOccurred;
-use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Failed\FailedJobProviderInterface;
 
 class BrefServiceProvider extends ServiceProvider
