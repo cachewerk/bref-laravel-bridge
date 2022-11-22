@@ -98,6 +98,7 @@ Additionally, you can use the [Parameters and Secrets Lambda extension](https://
 
 <details>
 <summary>Minimal serverless.yml example using Parameters and Secrets Lambda extension</summary>
+
 ```yml
 service: my-app
 
@@ -131,6 +132,7 @@ functions:
     events:
       - httpApi: "*"
 ```
+
 </details>
 
 Finally, deploy your app:
