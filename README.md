@@ -81,6 +81,8 @@ functions:
 
 If you don't want to use Octane, simply remove `APP_RUNTIME` and `BREF_LOOP_MAX` from the `web` function.
 
+### Secrets
+
 To avoid setting secrets as environment variables on your Lambda functions, you can inject them directly into the Lambda runtime:
 
 ```yml
@@ -90,7 +92,46 @@ provider:
     APP_SSM_PARAMETERS: "APP_KEY, DATABASE_URL"
 ```
 
-This will inject `APP_KEY` and `DATABASE_URL` using your service name and stage, for example from `/myapp-staging/APP_KEY`.
+This will resolve `APP_KEY` and `DATABASE_URL` during runtime. Your service name and stage will automatically be prepended to the parameter names. For example, the above example would resolve `/my-app-staging/APP_KEY` and `/my-app-staging/DATABASE_URL`.
+
+Additionally, you can use the [Parameters and Secrets Lambda extension](https://docs.aws.amazon.com/systems-manager/latest/userguide/ps-integration-lambda-extensions.html). If you are resolving a lot of different secrets during runtime, this might improve response times. In order to do so, add the [required layer](https://docs.aws.amazon.com/systems-manager/latest/userguide/ps-integration-lambda-extensions.html#ps-integration-lambda-extensions-add) to your function(s) and ensure you allow `ssm:GetParameter` in your IAM statements.
+
+<details>
+<summary>Minimal serverless.yml example using Parameters and Secrets Lambda extension</summary>
+```yml
+service: my-app
+
+provider:
+  name: aws
+  region: eu-central-1
+  stage: staging
+  runtime: provided.al2
+  environment:
+    APP_SSM_PREFIX: /${self:service}-${sls:stage}/
+    APP_SSM_PARAMETERS: "APP_KEY, DB_PASSWORD"
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Resource: arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/${self:service}-${sls:stage}/*
+          Action: [ ssm:GetParameter, ssm:GetParameters ] # singular for extension, plural for sdk
+
+plugins:
+  - ./vendor/bref/bref
+
+functions:
+  web:
+    handler: php/runtime.php
+    environment:
+      APP_RUNTIME: octane
+      BREF_LOOP_MAX: 250
+    layers:
+      - ${bref:layer.php-81}
+      - arn:aws:lambda:eu-central-1:187925254637:layer:AWS-Parameters-and-Secrets-Lambda-Extension:2
+    events:
+      - httpApi: "*"
+```
+</details>
 
 Finally, deploy your app:
 
