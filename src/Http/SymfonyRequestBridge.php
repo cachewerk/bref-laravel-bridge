@@ -23,6 +23,12 @@ class SymfonyRequestBridge
         $httpFoundationFactory = new HttpFoundationFactory();
         $symfonyRequest = $httpFoundationFactory->createRequest($psr7Request);
 
+        $symfonyRequest->server->add([
+            'HTTP_X_REQUEST_ID' => $context->getAwsRequestId(),
+            'LAMBDA_INVOCATION_CONTEXT' => json_encode($context),
+            'LAMBDA_REQUEST_CONTEXT' => json_encode($event->getRequestContext()),
+        ]);
+
         return $symfonyRequest;
     }
 }
