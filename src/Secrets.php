@@ -3,10 +3,12 @@
 namespace CacheWerk\BrefLaravelBridge;
 
 use Aws\Ssm\SsmClient;
-use Illuminate\Http\Client\PendingRequest;
+
+
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\PendingRequest;
 
 class Secrets
 {
@@ -37,9 +39,16 @@ class Secrets
         }
     }
 
+    /**
+     * Resolves secrets using Lambda extension.
+     *
+     * @param  string  $path
+     * @param  array  $parameters
+     * @return void
+     */
     protected static function resolveUsingLambdaExtension(string $path, array $parameters): array
     {
-        $httpFactory = new \Illuminate\Http\Client\Factory();
+        $httpFactory = new \Illuminate\Http\Client\Factory;
         $httpPool = new \Illuminate\Http\Client\Pool($httpFactory);
 
         foreach ($parameters as $secret) {
@@ -58,6 +67,13 @@ class Secrets
             ->toArray();
     }
 
+    /**
+     * Resolves secrets from AWS Systems Manager using SDK.
+     *
+     * @param  string  $path
+     * @param  array  $parameters
+     * @return void
+     */
     protected static function resolveUsingAwsSdk(string $path, array $parameters): array
     {
         $ssm = new SsmClient([
