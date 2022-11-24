@@ -4,7 +4,6 @@ namespace CacheWerk\BrefLaravelBridge;
 
 use Aws\Ssm\SsmClient;
 
-
 use Illuminate\Http\Client\Pool;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
