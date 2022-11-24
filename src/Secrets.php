@@ -12,8 +12,6 @@ use Illuminate\Http\Client\PendingRequest;
 
 class Secrets
 {
-    protected const LAMDA_EXTENSION_BINARY_PATH = '/opt/extensions/AWSParametersAndSecretsLambdaExtension';
-
     /**
      * Inject AWS SSM parameters into environment.
      *
@@ -23,13 +21,13 @@ class Secrets
      */
     public static function injectIntoEnvironment(string $path, array $parameters)
     {
-        $resolved = \file_exists(self::LAMDA_EXTENSION_BINARY_PATH)
+        $parameters = \file_exists('/opt/extensions/AWSParametersAndSecretsLambdaExtension')
             ? self::resolveUsingLambdaExtension($path, $parameters)
             : self::resolveUsingAwsSdk($path, $parameters);
 
         $injected = [];
 
-        foreach ($resolved as $key => $value) {
+        foreach ($parameters as $key => $value) {
             $injected[] = isset($_ENV[$key]) ? "{$key} (overwritten)" : $key;
             $_ENV[$key] = $value;
         }
