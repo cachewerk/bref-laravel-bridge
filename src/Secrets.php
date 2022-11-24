@@ -42,7 +42,7 @@ class Secrets
      *
      * @param  string  $path
      * @param  array  $parameters
-     * @return void
+     * @return array
      */
     protected static function resolveUsingLambdaExtension(string $path, array $parameters): array
     {
@@ -70,7 +70,7 @@ class Secrets
      *
      * @param  string  $path
      * @param  array  $parameters
-     * @return void
+     * @return array
      */
     protected static function resolveUsingAwsSdk(string $path, array $parameters): array
     {
