@@ -14,17 +14,18 @@ class StorageDirectories
     /**
      * Ensure the necessary storage directories exist.
      *
+     * @param  array  $extra
      * @return void
      */
-    public static function create()
+    public static function create(array $extra = [])
     {
-        $directories = [
+        $directories = array_merge([
             // self::Path . '/app',
             // self::Path . '/logs',
             self::Path . '/bootstrap/cache',
             self::Path . '/framework/cache',
             self::Path . '/framework/views',
-        ];
+        ], $extra);
 
         foreach ($directories as $directory) {
             if (! is_dir($directory)) {
