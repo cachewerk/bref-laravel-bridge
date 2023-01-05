@@ -55,6 +55,8 @@ Finally, deploy your app:
 serverless deploy
 ```
 
+When running in AWS Lambda, the Laravel application will automatically cache its configuration when booting. You don't need to run `php artisan config:cache` before deploying.
+
 You can deploy to different environments (aka "stages") by using the `--stage` option:
 
 ```bash
