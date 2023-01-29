@@ -30,4 +30,16 @@ return [
 
     'request_context' => false,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Write logs as JSON
+    |--------------------------------------------------------------------------
+    |
+    | By default, logs are written to CloudWatch as plain text.
+    | If you prefer, you can have them logged as JSON objects instead.
+    |
+    */
+
+    'logs_as_json' => false,
+
 ];

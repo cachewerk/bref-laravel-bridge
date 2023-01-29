@@ -40,7 +40,9 @@ class BrefServiceProvider extends ServiceProvider
 
         Config::set('app.mix_url', Config::get('app.asset_url'));
 
-        Config::set('logging.channels.stderr.formatter', JsonFormatter::class);
+        if (Config::get('bref.logs_as_json')) {
+            Config::set('logging.channels.stderr.formatter', JsonFormatter::class);
+        }
 
         Config::set('trustedproxy.proxies', ['0.0.0.0/0', '2000:0:0:0:0:0:0:0/3']);
 
