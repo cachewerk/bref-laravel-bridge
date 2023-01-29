@@ -38,17 +38,6 @@ provider:
     AWS_ACCOUNT_ID: ${aws:accountId}
 ```
 
-To avoid setting secrets as environment variables on your Lambda functions, you can inject them directly into the Lambda runtime:
-
-```yml
-provider:
-  environment:
-    APP_SSM_PREFIX: /${self:service}-${sls:stage}/
-    APP_SSM_PARAMETERS: "APP_KEY, DATABASE_URL"
-```
-
-This will inject `APP_KEY` and `DATABASE_URL` using your service name and stage, for example from `/myapp-staging/APP_KEY`.
-
 Finally, deploy your app:
 
 ```bash

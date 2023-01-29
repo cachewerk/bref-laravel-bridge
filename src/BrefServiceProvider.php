@@ -76,8 +76,6 @@ class BrefServiceProvider extends ServiceProvider
 
         $this->app->useStoragePath(StorageDirectories::Path);
 
-        $this->loadSsmParameters();
-
         $this->cacheLaravelConfig();
 
         if ($this->app->runningInConsole()) {
@@ -158,21 +156,6 @@ class BrefServiceProvider extends ServiceProvider
 
         if (Config::get('logging.default') === 'stack') {
             Config::set('logging.default', 'stderr');
-        }
-    }
-
-    /**
-     * Load environment variables from SSM parameters.
-     */
-    private function loadSsmParameters(): void
-    {
-        $ssmPrefix = $_ENV['APP_SSM_PREFIX'] ?? '';
-        $ssmParameters = $_ENV['APP_SSM_PARAMETERS'] ?? '';
-        $configCachePath = StorageDirectories::Path . '/bootstrap/cache/config.php';
-        $configIsCached = file_exists($configCachePath);
-
-        if ($ssmParameters && ! $configIsCached) {
-            Secrets::injectIntoEnvironment($ssmPrefix, explode(',', $ssmParameters));
         }
     }
 
