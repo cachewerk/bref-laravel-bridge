@@ -2,8 +2,6 @@
 
 namespace CacheWerk\BrefLaravelBridge;
 
-use Monolog\Formatter\JsonFormatter;
-
 use Illuminate\Log\LogManager;
 
 use Illuminate\Support\Facades\Config;
@@ -39,10 +37,6 @@ class BrefServiceProvider extends ServiceProvider
         $this->fixDefaultConfiguration();
 
         Config::set('app.mix_url', Config::get('app.asset_url'));
-
-        if (Config::get('bref.logs_as_json')) {
-            Config::set('logging.channels.stderr.formatter', JsonFormatter::class);
-        }
 
         Config::set('trustedproxy.proxies', ['0.0.0.0/0', '2000:0:0:0:0:0:0:0/3']);
 

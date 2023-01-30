@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v2.0.0]
 ### Breaking Changes
-- Logs are now written in plain text by default instead of JSON. To enable JSON logs, set `logs_as_json` to `true` in `config/bref.php`.
+- Logs are now written in plain text by default instead of JSON. To enable JSON logs, set `channels.stderr.formatter` to `Monolog\Formatter\JsonFormatter::class` in `config/logging.php`.
 
 ## [Unreleased]
 ## [v0.3.0] - 2022-11-15
