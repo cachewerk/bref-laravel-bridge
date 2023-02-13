@@ -9,7 +9,6 @@ use Illuminate\Support\ServiceProvider;
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Queue\Events\JobProcessed;
@@ -68,15 +67,7 @@ class BrefServiceProvider extends ServiceProvider
      */
     public function boot(Dispatcher $dispatcher, LogManager $logManager, FailedJobProviderInterface $queueFailer)
     {
-        if (! defined('STDERR')) {
-            define('STDERR', fopen('php://stderr', 'wb'));
-        }
-
-        StorageDirectories::create();
-
         $this->app->useStoragePath(StorageDirectories::Path);
-
-        $this->cacheLaravelConfig();
 
         if ($this->app->runningInConsole()) {
             $this->publishes([
@@ -156,24 +147,6 @@ class BrefServiceProvider extends ServiceProvider
 
         if (Config::get('logging.default') === 'stack') {
             Config::set('logging.default', 'stderr');
-        }
-    }
-
-    private function cacheLaravelConfig(): void
-    {
-        $configCachePath = StorageDirectories::Path . '/bootstrap/cache/config.php';
-        $configIsCached = file_exists($configCachePath);
-
-        $_ENV['APP_CONFIG_CACHE'] = $configCachePath;
-
-        if (! $configIsCached && ($_ENV['BREF_CURRENTLY_CACHING'] ?? '') !== '1') {
-            // Prevent infinite recursion
-            $_ENV['BREF_CURRENTLY_CACHING'] = '1';
-
-            fwrite(STDERR, 'Caching Laravel configuration' . PHP_EOL);
-            $this->app->make(ConsoleKernel::class)->call('config:cache');
-
-            unset($_ENV['BREF_CURRENTLY_CACHING']);
         }
     }
 }
