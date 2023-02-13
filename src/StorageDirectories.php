@@ -26,11 +26,14 @@ class StorageDirectories
             self::Path . '/framework/views',
         ];
 
-        foreach ($directories as $directory) {
-            if (! is_dir($directory)) {
-                fwrite(STDERR, "Creating storage directory: {$directory}" . PHP_EOL);
+        $directories = array_filter($directories, static fn ($directory) => ! is_dir($directory));
+        if (count($directories) > 0) {
+            fwrite(STDERR, 'Creating storage directories: ' . implode(', ', $directories) . PHP_EOL);
+        }
 
-                mkdir($directory, 0755, true);
+        foreach ($directories as $directory) {
+            if (!mkdir($directory, 0755, true) && !is_dir($directory)) {
+                throw new \RuntimeException(sprintf('Directory "%s" could not created', $directory));
             }
         }
     }
