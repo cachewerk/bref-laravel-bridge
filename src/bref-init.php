@@ -30,3 +30,5 @@ Bref::beforeStartup(static function () {
         }
     }
 });
+
+Bref::setContainer(fn() => require getcwd() . '/bootstrap/app.php');

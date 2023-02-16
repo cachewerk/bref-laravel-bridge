@@ -55,10 +55,9 @@ plugins:
 
 functions:
   web:
-    handler: php/runtime.php
+    handler: CacheWerk\BrefLaravelBridge\Http\OctaneHandler
     timeout: 20
     environment:
-      APP_RUNTIME: octane
       BREF_LOOP_MAX: 250
       BREF_BINARY_RESPONSES: 1
     layers:

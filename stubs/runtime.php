@@ -27,10 +27,6 @@ if ($runtime === 'queue') {
     ]);
 }
 
-if ($runtime === 'octane') {
-    return new OctaneHandler;
-}
-
 return new HttpHandler(
     $app->make(HttpKernel::class)
 );

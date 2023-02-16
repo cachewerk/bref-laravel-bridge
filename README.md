@@ -56,22 +56,13 @@ Check out some more [comprehensive examples](examples/).
 
 ## Octane
 
-If you want to run the HTTP application with Laravel Octane, you will first need to publish the PHP runtime:
-
-```
-php artisan vendor:publish --tag=bref-runtime
-```
-
-By default, the runtime is published to `php/` where Bref's PHP configuration resides, but it can be moved anywhere.
-
-Then, change the following options in the `web` function:
+If you want to run the HTTP application with Laravel Octane, you will to change the following options in the `web` function:
 
 ```yml
 functions:
     web:
-        handler: php/runtime.php
+        handler: CacheWerk\BrefLaravelBridge\Http\OctaneHandler
         environment:
-            APP_RUNTIME: octane
             BREF_LOOP_MAX: 250
         layers:
             - ${bref:layer.php-81}
