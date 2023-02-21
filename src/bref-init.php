@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use Bref\Bref;
+use CacheWerk\BrefLaravelBridge\HandlerResolver;
 use CacheWerk\BrefLaravelBridge\StorageDirectories;
 
 Bref::beforeStartup(static function () {
@@ -31,4 +32,4 @@ Bref::beforeStartup(static function () {
     }
 });
 
-Bref::setContainer(fn() => require getcwd() . '/bootstrap/app.php');
+Bref::setContainer(static fn() => new HandlerResolver);
