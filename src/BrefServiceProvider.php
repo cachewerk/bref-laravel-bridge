@@ -64,9 +64,6 @@ class BrefServiceProvider extends ServiceProvider
         $this->app->when(QueueHandler::class)
             ->needs('$connection')
             ->giveConfig('queue.default');
-        $this->app->when(QueueHandler::class)
-            ->needs('$queue')
-            ->giveConfig('queue.connections.sqs.queue');
     }
 
     /**

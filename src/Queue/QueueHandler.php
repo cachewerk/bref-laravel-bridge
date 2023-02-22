@@ -43,7 +43,6 @@ class QueueHandler extends SqsHandler
      * @param  \Illuminate\Contracts\Events\Dispatcher  $events
      * @param  \Illuminate\Contracts\Debug\ExceptionHandler  $exceptions
      * @param  string  $connection
-     * @param  string  $queue
      * @return void
      */
     public function __construct(
@@ -51,7 +50,6 @@ class QueueHandler extends SqsHandler
         protected Dispatcher $events,
         protected ExceptionHandler $exceptions,
         protected string $connection,
-        protected string $queue,
     ) {
         $queue = $container->make(QueueManager::class)
             ->connection($connection);
