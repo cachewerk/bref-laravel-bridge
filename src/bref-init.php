@@ -24,7 +24,7 @@ Bref::beforeStartup(static function () {
     // Automatically caches the configuration if it does not exist (only once)
     if (! file_exists($newConfigCachePath)) {
         $_SERVER['APP_CONFIG_CACHE'] = $_ENV['APP_CONFIG_CACHE'] = $newConfigCachePath;
-        putenv('APP_CONFIG_CACHE=' . $newConfigCachePath);
+        putenv("APP_CONFIG_CACHE={$newConfigCachePath}");
 
         fwrite(STDERR, "Running 'php artisan config:cache' to cache the Laravel configuration\n");
 
