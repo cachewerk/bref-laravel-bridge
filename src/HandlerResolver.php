@@ -2,6 +2,7 @@
 
 namespace CacheWerk\BrefLaravelBridge;
 
+use CacheWerk\BrefLaravelBridge\Http\OctaneHandler;
 use RuntimeException;
 use Bref\Runtime\FileHandlerLocator;
 use Psr\Container\ContainerInterface;
@@ -32,6 +33,11 @@ class HandlerResolver implements ContainerInterface
             return $this->fileLocator->get($id);
         }
 
+        // The Octane handler is special: it is not created by Laravel's container
+        if ($id === OctaneHandler::class) {
+            return new OctaneHandler;
+        }
+
         // If not, we try to get the handler from the Laravel container
         return $this->laravelApp()->get($id);
     }
@@ -40,6 +46,11 @@ class HandlerResolver implements ContainerInterface
     {
         // By default, we check if the handler is a file name (classic Bref behavior)
         if ($this->fileLocator->has($id)) {
+            return true;
+        }
+
+        // The Octane handler is special: it is not created by Laravel's container
+        if ($id === OctaneHandler::class) {
             return true;
         }
 
