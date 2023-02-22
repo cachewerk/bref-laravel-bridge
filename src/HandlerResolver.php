@@ -77,4 +77,5 @@ class HandlerResolver implements ContainerInterface
         }
 
         return $this->laravelApp;
+    }
 }
