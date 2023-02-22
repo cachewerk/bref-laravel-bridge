@@ -2,11 +2,12 @@
 
 namespace CacheWerk\BrefLaravelBridge;
 
-use CacheWerk\BrefLaravelBridge\Http\OctaneHandler;
 use RuntimeException;
+
 use Bref\Runtime\FileHandlerLocator;
 use Psr\Container\ContainerInterface;
 use Illuminate\Foundation\Application;
+use CacheWerk\BrefLaravelBridge\Http\OctaneHandler;
 
 /**
  * This class resolves Lambda handlers.
