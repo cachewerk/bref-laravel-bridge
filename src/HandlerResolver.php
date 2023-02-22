@@ -6,6 +6,7 @@ use RuntimeException;
 use Bref\Runtime\FileHandlerLocator;
 use Psr\Container\ContainerInterface;
 use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Console\Kernel;
 
 /**
  * This class resolves Lambda handlers.
@@ -75,6 +76,8 @@ class HandlerResolver implements ContainerInterface
                 is_object($this->laravelApp) ? get_class($this->laravelApp) : gettype($this->laravelApp),
             ));
         }
+        $kernel = $this->laravelApp->make(Kernel::class);
+        $kernel->bootstrap();
 
         return $this->laravelApp;
     }
