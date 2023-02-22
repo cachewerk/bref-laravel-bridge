@@ -3,8 +3,10 @@
 namespace CacheWerk\BrefLaravelBridge;
 
 use RuntimeException;
+
 use Bref\Runtime\FileHandlerLocator;
 use Psr\Container\ContainerInterface;
+
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Console\Kernel;
 
@@ -16,14 +18,14 @@ use Illuminate\Foundation\Console\Kernel;
  */
 class HandlerResolver implements ContainerInterface
 {
-    private ?Application $laravelApp;
+    private ?Application $laravel;
     private FileHandlerLocator $fileLocator;
 
     public function __construct()
     {
         // Bref's default handler resolver
         $this->fileLocator = new FileHandlerLocator;
-        $this->laravelApp = null;
+        $this->laravel = null;
     }
 
     public function get(string $id)
@@ -34,7 +36,7 @@ class HandlerResolver implements ContainerInterface
         }
 
         // If not, we try to get the handler from the Laravel container
-        return $this->laravelApp()->get($id);
+        return $this->laravel()->get($id);
     }
 
     public function has(string $id): bool
@@ -45,17 +47,17 @@ class HandlerResolver implements ContainerInterface
         }
 
         // If not, we try to get the handler from the Laravel container
-        return $this->laravelApp()->has($id);
+        return $this->laravel()->has($id);
     }
 
     /**
      * Create and return the Laravel application.
      */
-    private function laravelApp(): Application
+    private function laravel(): Application
     {
         // Only create it once
-        if ($this->laravelApp) {
-            return $this->laravelApp;
+        if ($this->laravel) {
+            return $this->laravel;
         }
 
         $bootstrapFile = getcwd() . '/bootstrap/app.php';
@@ -66,19 +68,20 @@ class HandlerResolver implements ContainerInterface
             );
         }
 
-        $this->laravelApp = require $bootstrapFile;
+        $this->laravel = require $bootstrapFile;
 
-        if (! $this->laravelApp instanceof Application) {
+        if (! $this->laravel instanceof Application) {
             throw new RuntimeException(sprintf(
                 "Expected the `%s` file to return a %s object, instead it returned `%s`",
                 $bootstrapFile,
                 Application::class,
-                is_object($this->laravelApp) ? get_class($this->laravelApp) : gettype($this->laravelApp),
+                is_object($this->laravel) ? get_class($this->laravel) : gettype($this->laravel),
             ));
         }
-        $kernel = $this->laravelApp->make(Kernel::class);
+
+        $kernel = $this->laravel->make(Kernel::class);
         $kernel->bootstrap();
 
-        return $this->laravelApp;
+        return $this->laravel;
     }
 }
