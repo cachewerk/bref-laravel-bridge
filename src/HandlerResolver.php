@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
 namespace CacheWerk\BrefLaravelBridge;
 
-use Bref\Runtime\FileHandlerLocator;
-use Illuminate\Foundation\Application;
-use Psr\Container\ContainerInterface;
 use RuntimeException;
+use Bref\Runtime\FileHandlerLocator;
+use Psr\Container\ContainerInterface;
+use Illuminate\Foundation\Application;
 
 /**
  * This class resolves Lambda handlers.
@@ -55,26 +53,28 @@ class HandlerResolver implements ContainerInterface
     private function laravelApp(): Application
     {
         // Only create it once
-        if (! $this->laravelApp) {
-            $bootstrapFile = getcwd() . '/bootstrap/app.php';
+        if ($this->laravelApp) {
+            return $this->laravelApp;
+        }
 
-            if (! file_exists($bootstrapFile)) {
-                throw new RuntimeException(
-                    "Cannot find file '$bootstrapFile': Bref tried to require that file to retrieve the Laravel app"
-                );
-            }
+        $bootstrapFile = getcwd() . '/bootstrap/app.php';
 
-            $this->laravelApp = require $bootstrapFile;
+        if (! file_exists($bootstrapFile)) {
+            throw new RuntimeException(
+                "Unable to locate `{$bootstrapFile}`: Bref tried to load that file to retrieve the Laravel app"
+            );
+        }
 
-            if (! $this->laravelApp instanceof Application) {
-                throw new RuntimeException(sprintf(
-                    "Expected the '%s' file to return a Illuminate\Foundation\Application object, instead it returned '%s'",
-                    $bootstrapFile,
-                    is_object($this->laravelApp) ? get_class($this->laravelApp) : gettype($this->laravelApp),
-                ));
-            }
+        $this->laravelApp = require $bootstrapFile;
+
+        if (! $this->laravelApp instanceof Application) {
+            throw new RuntimeException(sprintf(
+                "Expected the `%s` file to return a %s object, instead it returned `%s`",
+                $bootstrapFile,
+                Application::class,
+                is_object($this->laravelApp) ? get_class($this->laravelApp) : gettype($this->laravelApp),
+            ));
         }
 
         return $this->laravelApp;
-    }
 }
