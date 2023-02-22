@@ -79,10 +79,8 @@ functions:
           input: '"schedule:run"'
 
   queue:
-    handler: php/runtime.php
+    handler: CacheWerk\BrefLaravelBridge\Queue\QueueHandler
     timeout: 59
-    environment:
-      APP_RUNTIME: queue
     layers:
       - ${bref:layer.php-81}
     events:

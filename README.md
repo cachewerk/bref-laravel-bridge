@@ -71,21 +71,13 @@ functions:
 
 ## Laravel Queues
 
-If you want to run Laravel Queues, you will need to publish the PHP runtime (just like in the "Octane" section above):
-
-```
-php artisan vendor:publish --tag=bref-runtime
-```
-
-Then, you can add a `queue` function to `serverless.yml`:
+If you want to run Laravel Queues, you will need to add a `queue` function to `serverless.yml`:
 
 ```yml
 functions:
     queue:
-        handler: php/runtime.php
+        handler: CacheWerk\BrefLaravelBridge\Queue\QueueHandler
         timeout: 59 # in seconds
-        environment:
-            APP_RUNTIME: queue
         layers:
             - ${bref:layer.php-81}
         events:

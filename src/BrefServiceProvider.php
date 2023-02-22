@@ -2,6 +2,8 @@
 
 namespace CacheWerk\BrefLaravelBridge;
 
+use CacheWerk\BrefLaravelBridge\Queue\QueueHandler;
+
 use Illuminate\Log\LogManager;
 
 use Illuminate\Support\Facades\Config;
@@ -58,6 +60,13 @@ class BrefServiceProvider extends ServiceProvider
         Config::set('queue.connections.sqs.secret');
         Config::set('queue.connections.sqs.token', env('AWS_SESSION_TOKEN'));
         Config::set('queue.connections.sqs.prefix', env('SQS_PREFIX', "https://sqs.{$region}.amazonaws.com/{$account}"));
+
+        $this->app->when(QueueHandler::class)
+            ->needs('$connection')
+            ->giveConfig('queue.default');
+        $this->app->when(QueueHandler::class)
+            ->needs('$queue')
+            ->giveConfig('queue.connections.sqs.queue');
     }
 
     /**
