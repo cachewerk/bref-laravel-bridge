@@ -86,10 +86,6 @@ class BrefServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../config/bref.php' => config_path('bref.php'),
             ], 'bref-config');
-
-            $this->publishes([
-                __DIR__ . '/../stubs/runtime.php' => base_path('php/runtime.php'),
-            ], 'bref-runtime');
         }
 
         $dispatcher->listen(
